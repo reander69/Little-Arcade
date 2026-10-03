@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f6f5f1" />
+    <meta
+      name="description"
+      content="A tiny arcade for a little break. Play number guess, rock paper scissors, and a quick math challenge."
+    />
+    <title>Little Arcade — Games for a little break</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Little Arcade home">
+          <span class="brand-mark" aria-hidden="true">✳</span>
+          <span>little arcade</span>
+        </a>
+        <div class="topbar-note"><span class="live-dot"></span> GOOD GAMES, NO DOWNLOADS</div>
+        <a class="about-link" href="#games">Pick a game <span aria-hidden="true">↓</span></a>
+      </header>
+
+      <main>
+        <section class="intro" aria-labelledby="page-title">
+          <div class="intro-copy">
+            <p class="eyebrow"><span>✦</span> YOUR LITTLE CORNER OF FUN</p>
+            <h1 id="page-title">Take a break.<br /><span>Play a little.</span></h1>
+            <p class="intro-description">
+              Tiny games for a tiny breather. Pick one, see how you do, and don't forget to have fun.
+            </p>
+          </div>
+          <div class="intro-art" aria-hidden="true">
+            <div class="sunburst">✳</div>
+            <div class="art-card art-card-back">
+              <span class="art-card-symbol">?</span>
+              <span class="art-card-label">A LITTLE MYSTERY</span>
+            </div>
+            <div class="art-card art-card-front">
+              <span class="art-card-label">YOUR NEXT</span>
+              <span class="art-card-title">great<br />guess</span>
+              <span class="art-card-number">0 — 100</span>
+            </div>
+            <span class="art-sparkle sparkle-one">✦</span>
+            <span class="art-sparkle sparkle-two">✧</span>
+          </div>
+        </section>
+
+        <section class="arcade" id="games" aria-labelledby="games-title">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">THE ARCADE</p>
+              <h2 id="games-title">What sounds fun?</h2>
+            </div>
+            <span class="game-count">03 GAMES <span aria-hidden="true">✳</span></span>
+          </div>
+
+          <div class="game-layout">
+            <nav class="game-list" aria-label="Choose a game">
+              <button class="game-card selected" type="button" data-game="guess" aria-pressed="true">
+                <span class="game-icon guess-icon" aria-hidden="true">?</span>
+                <span class="game-card-copy">
+                  <span class="game-card-title">Number guess</span>
+                  <span class="game-card-meta">A LITTLE MYSTERY · 1 PLAYER</span>
+                </span>
+                <span class="card-arrow" aria-hidden="true">↗</span>
+              </button>
+              <button class="game-card" type="button" data-game="rps" aria-pressed="false">
+                <span class="game-icon rps-icon" aria-hidden="true">✌</span>
+                <span class="game-card-copy">
+                  <span class="game-card-title">Rock paper scissors</span>
+                  <span class="game-card-meta">OLD SCHOOL · 1 PLAYER</span>
+                </span>
+                <span class="card-arrow" aria-hidden="true">↗</span>
+              </button>
+              <button class="game-card" type="button" data-game="math" aria-pressed="false">
+                <span class="game-icon math-icon" aria-hidden="true">＋</span>
+                <span class="game-card-copy">
+                  <span class="game-card-title">Quick math</span>
+                  <span class="game-card-meta">BEAT THE CLOCK · 1 PLAYER</span>
+                </span>
+                <span class="card-arrow" aria-hidden="true">↗</span>
+              </button>
+              <div class="tiny-note">
+                <span aria-hidden="true">☻</span>
+                <p>Made for fun.<br /><strong>Best played with a smile.</strong></p>
+              </div>
+            </nav>
+
+            <section class="game-panel" aria-live="polite" aria-atomic="false">
+              <div class="panel-topline">
+                <span class="playing-label"><span class="playing-dot"></span> NOW PLAYING</span>
+                <span class="panel-game-name" id="panel-game-name">NUMBER GUESS</span>
+              </div>
+              <div id="game-content"></div>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span>✳ LITTLE ARCADE</span>
+        <span>A small pause in your big day.</span>
+        <a href="#games">BACK TO THE GAMES ↑</a>
+      </footer>
+    </div>
+  </body>
+</html>
