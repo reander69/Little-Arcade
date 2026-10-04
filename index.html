@@ -6,9 +6,9 @@
     <meta name="theme-color" content="#f6f5f1" />
     <meta
       name="description"
-      content="A tiny arcade for a little break. Play number guess, rock paper scissors, and a quick math challenge."
+      content="A cheerful arcade for kids with easy games, big buttons, and lots of smiles."
     />
-    <title>Little Arcade — Games for a little break</title>
+    <title>Little Arcade for Kids</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -19,33 +19,70 @@
     <script src="app.js" defer></script>
   </head>
   <body>
+    <div class="start-screen" id="start-screen" aria-live="polite">
+      <div class="start-panel">
+        <div class="start-badge">🌟 READY, SET, PLAY!</div>
+        <h2>Welcome to Little Arcade!</h2>
+        <p>Pick a level and start your fun adventure.</p>
+        <div class="level-picker" aria-label="Choose a level">
+          <button class="level-button selected" type="button" data-level="1">Level 1<br /><span>Easy peasy</span></button>
+          <button class="level-button" type="button" data-level="2">Level 2<br /><span>Super fun</span></button>
+          <button class="level-button" type="button" data-level="3">Level 3<br /><span>Big challenge</span></button>
+        </div>
+        <button class="start-button" id="start-game-btn" type="button">Start the adventure! 🚀</button>
+      </div>
+    </div>
+
     <div class="page-shell">
       <header class="topbar">
         <a class="brand" href="#" aria-label="Little Arcade home">
           <span class="brand-mark" aria-hidden="true">✳</span>
           <span>little arcade</span>
         </a>
-        <div class="topbar-note"><span class="live-dot"></span> GOOD GAMES, NO DOWNLOADS</div>
-        <a class="about-link" href="#games">Pick a game <span aria-hidden="true">↓</span></a>
+        <div class="topbar-note"><span class="live-dot"></span> BIG FUN, NO DOWNLOADS</div>
+        <div class="topbar-actions">
+          <button class="sound-toggle" type="button" aria-label="Sound on">🔊</button>
+          <a class="about-link" href="#games">Pick a game <span aria-hidden="true">↓</span></a>
+        </div>
       </header>
 
       <main>
         <section class="intro" aria-labelledby="page-title">
           <div class="intro-copy">
-            <p class="eyebrow"><span>✦</span> YOUR LITTLE CORNER OF FUN</p>
-            <h1 id="page-title">Take a break.<br /><span>Play a little.</span></h1>
+            <p class="eyebrow"><span>✦</span> FUN TIME FOR KIDS</p>
+            <h1 id="page-title">Play, smile,<br /><span>and have fun!</span></h1>
             <p class="intro-description">
-              Tiny games for a tiny breather. Pick one, see how you do, and don't forget to have fun.
+              Easy games, bright colors, and big buttons make it fun for kids to play and learn.
             </p>
           </div>
           <div class="intro-art" aria-hidden="true">
-            <div class="sunburst">✳</div>
+            <div class="sunburst">☀</div>
+            <div class="cloud cloud-one">☁</div>
+            <div class="cloud cloud-two">☁</div>
+            <div class="speech-bubble" id="mascot-bubble">Hi!</div>
+            <div class="cartoon-scene">
+              <div class="character">
+                <div class="ear left"></div>
+                <div class="ear right"></div>
+                <div class="character-head">
+                  <span class="eye left"></span>
+                  <span class="eye right"></span>
+                  <span class="smile"></span>
+                </div>
+                <div class="body">
+                  <span class="arm left"></span>
+                  <span class="arm right"></span>
+                  <span class="paw left"></span>
+                  <span class="paw right"></span>
+                </div>
+              </div>
+            </div>
             <div class="art-card art-card-back">
               <span class="art-card-symbol">?</span>
-              <span class="art-card-label">A LITTLE MYSTERY</span>
+              <span class="art-card-label">FUN MYSTERY</span>
             </div>
             <div class="art-card art-card-front">
-              <span class="art-card-label">YOUR NEXT</span>
+              <span class="art-card-label">READY?</span>
               <span class="art-card-title">great<br />guess</span>
               <span class="art-card-number">0 — 100</span>
             </div>
@@ -58,7 +95,7 @@
           <div class="section-heading">
             <div>
               <p class="eyebrow">THE ARCADE</p>
-              <h2 id="games-title">What sounds fun?</h2>
+              <h2 id="games-title">Which game do you want?</h2>
             </div>
             <span class="game-count">03 GAMES <span aria-hidden="true">✳</span></span>
           </div>
@@ -68,8 +105,8 @@
               <button class="game-card selected" type="button" data-game="guess" aria-pressed="true">
                 <span class="game-icon guess-icon" aria-hidden="true">?</span>
                 <span class="game-card-copy">
-                  <span class="game-card-title">Number guess</span>
-                  <span class="game-card-meta">A LITTLE MYSTERY · 1 PLAYER</span>
+                  <span class="game-card-title">Guess the number</span>
+                  <span class="game-card-meta">FUN MYSTERY · 1 PLAYER</span>
                 </span>
                 <span class="card-arrow" aria-hidden="true">↗</span>
               </button>
@@ -77,28 +114,28 @@
                 <span class="game-icon rps-icon" aria-hidden="true">✌</span>
                 <span class="game-card-copy">
                   <span class="game-card-title">Rock paper scissors</span>
-                  <span class="game-card-meta">OLD SCHOOL · 1 PLAYER</span>
+                  <span class="game-card-meta">PLAY AND WIN · 1 PLAYER</span>
                 </span>
                 <span class="card-arrow" aria-hidden="true">↗</span>
               </button>
               <button class="game-card" type="button" data-game="math" aria-pressed="false">
                 <span class="game-icon math-icon" aria-hidden="true">＋</span>
                 <span class="game-card-copy">
-                  <span class="game-card-title">Quick math</span>
-                  <span class="game-card-meta">BEAT THE CLOCK · 1 PLAYER</span>
+                  <span class="game-card-title">Fast math</span>
+                  <span class="game-card-meta">BRAIN BOOST · 1 PLAYER</span>
                 </span>
                 <span class="card-arrow" aria-hidden="true">↗</span>
               </button>
               <div class="tiny-note">
                 <span aria-hidden="true">☻</span>
-                <p>Made for fun.<br /><strong>Best played with a smile.</strong></p>
+                <p>Made for fun.<br /><strong>Big smiles welcome.</strong></p>
               </div>
             </nav>
 
             <section class="game-panel" aria-live="polite" aria-atomic="false">
               <div class="panel-topline">
                 <span class="playing-label"><span class="playing-dot"></span> NOW PLAYING</span>
-                <span class="panel-game-name" id="panel-game-name">NUMBER GUESS</span>
+                <span class="panel-game-name" id="panel-game-name">GUESS THE NUMBER</span>
               </div>
               <div id="game-content"></div>
             </section>
@@ -108,8 +145,8 @@
 
       <footer class="footer">
         <span>✳ LITTLE ARCADE</span>
-        <span>A small pause in your big day.</span>
-        <a href="#games">BACK TO THE GAMES ↑</a>
+        <span>Fun for kids, one game at a time.</span>
+        <a href="#games">BACK TO GAMES ↑</a>
       </footer>
     </div>
   </body>
