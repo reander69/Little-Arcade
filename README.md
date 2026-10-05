@@ -2,9 +2,9 @@
 
 A lightweight browser arcade with three quick, no-download games:
 
-- **Number guess** — guess the secret number from 1 to 100.
+- **Number guess** — guess a secret number from 1 to 50, 1 to 100, or 1 to 200 depending on the selected level.
 - **Rock paper scissors** — play against the computer and keep score.
-- **Quick math** — solve as many addition and subtraction problems as you can in 30 seconds.
+- **Quick math** — solve as many addition and subtraction problems as you can in 1 minute.
 
 ## Play locally
 

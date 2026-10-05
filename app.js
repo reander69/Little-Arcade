@@ -6,6 +6,7 @@ const startScreen = document.querySelector("#start-screen");
 const startGameButton = document.querySelector("#start-game-btn");
 const soundToggle = document.querySelector(".sound-toggle");
 const mascotBubble = document.querySelector("#mascot-bubble");
+const mathRoundDuration = 60;
 
 let secretNumber = randomInteger(1, 100);
 let soundEnabled = true;
@@ -13,9 +14,12 @@ let currentLevel = 1;
 let musicTimer = null;
 let guesses = 0;
 let guessFinished = false;
+let guessStarted = false;
 let rpsScore = { wins: 0, losses: 0, draws: 0 };
+let rpsMoveCounts = { rock: 0, paper: 0, scissors: 0 };
+let lastRpsPlayerMove = null;
 let mathScore = 0;
-let mathTimeLeft = 30;
+let mathTimeLeft = mathRoundDuration;
 let mathTimer = null;
 let mathAnswer = 0;
 let mathRunning = false;
@@ -139,7 +143,7 @@ function selectGame(game) {
     window.clearInterval(mathTimer);
     mathTimer = null;
     mathRunning = false;
-    mathTimeLeft = 30;
+    mathTimeLeft = mathRoundDuration;
   }
 
   const titles = {
@@ -154,6 +158,7 @@ function selectGame(game) {
     secretNumber = randomInteger(1, max);
     guesses = 0;
     guessFinished = false;
+    guessStarted = false;
     renderGuessGame();
   }
   if (game === "rps") renderRpsGame();
@@ -161,9 +166,9 @@ function selectGame(game) {
 }
 
 function getGuessRange() {
-  if (currentLevel === 1) return { min: 1, max: 20 };
-  if (currentLevel === 2) return { min: 1, max: 50 };
-  return { min: 1, max: 100 };
+  if (currentLevel === 1) return { min: 1, max: 50 };
+  if (currentLevel === 2) return { min: 1, max: 100 };
+  return { min: 1, max: 200 };
 }
 
 function renderGuessGame(feedback = "", feedbackClass = "") {
@@ -174,12 +179,14 @@ function renderGuessGame(feedback = "", feedbackClass = "") {
   gameContent.innerHTML = `
     <div class="game-view">
       <h3 class="game-heading">I am thinking of a number!</h3>
-      <p class="game-subheading">Can you find it? It is between ${min} and ${max}.</p>
-      <form class="guess-form" id="guess-form">
-        <label class="visually-hidden" for="guess-input">${inputLabel}</label>
-        <input class="guess-input" id="guess-input" type="number" min="${min}" max="${max}" placeholder="?" required ${guessFinished ? "disabled" : ""} />
-        <button class="primary-button" type="submit" ${guessFinished ? "disabled" : ""}>Guess! <span aria-hidden="true">↗</span></button>
-      </form>
+      <p class="game-subheading ${guessStarted ? "" : "guess-prompt"}">${guessStarted ? `The number is between ${min} and ${max}. What is your guess?` : `Tap Start game when you are ready to guess a number from ${min} to ${max}.`}</p>
+      ${guessStarted ? `
+        <form class="guess-form" id="guess-form">
+          <label class="visually-hidden" for="guess-input">${inputLabel}</label>
+          <input class="guess-input" id="guess-input" type="number" min="${min}" max="${max}" placeholder="?" required ${guessFinished ? "disabled" : ""} />
+          <button class="primary-button" type="submit" ${guessFinished ? "disabled" : ""}>Guess! <span aria-hidden="true">↗</span></button>
+        </form>
+      ` : '<div class="guess-start-row"><button class="primary-button" id="guess-start" type="button">Start game ↗</button></div>'}
       <p class="game-feedback ${feedbackClass}" id="guess-feedback" role="status" aria-live="polite">${feedback}</p>
       <div class="guess-stats">
         <div class="stat"><span class="stat-label">TRIES</span><span class="stat-value">${guesses}</span></div>
@@ -189,11 +196,16 @@ function renderGuessGame(feedback = "", feedbackClass = "") {
     </div>
   `;
 
-  document.querySelector("#guess-form").addEventListener("submit", handleGuess);
+  if (guessStarted) {
+    document.querySelector("#guess-form").addEventListener("submit", handleGuess);
+  } else {
+    document.querySelector("#guess-start").addEventListener("click", () => {
+      guessStarted = true;
+      renderGuessGame();
+    });
+  }
   if (guessFinished) {
     document.querySelector("#guess-reset").addEventListener("click", resetGuessGame);
-  } else {
-    document.querySelector("#guess-input").focus({ preventScroll: true });
   }
 }
 
@@ -223,7 +235,7 @@ function handleGuess(event) {
 
   playWrongSound();
   const hint = guess < secretNumber ? "Too low! Try a bigger number." : "Too high! Try a smaller number.";
-  renderGuessGame(hint);
+  renderGuessGame(hint, "hint");
   document.querySelector("#guess-input").focus({ preventScroll: true });
 }
 
@@ -232,6 +244,7 @@ function resetGuessGame() {
   secretNumber = randomInteger(1, max);
   guesses = 0;
   guessFinished = false;
+  guessStarted = false;
   renderGuessGame();
 }
 
@@ -239,10 +252,15 @@ function renderRpsGame(result = "Pick a move to play!", resultIcon = "✊", roun
   const icons = { rock: "✊", paper: "✋", scissors: "✌" };
   const playerIcon = round ? icons[round.playerMove] : "✊";
   const computerIcon = round ? icons[round.computerMove] : "✊";
+  const difficultyDescriptions = {
+    1: "Level 1 · Easy: the computer picks randomly.",
+    2: "Level 2 · Medium: it sometimes counters your last move.",
+    3: "Level 3 · Hard: it often counters your most-picked move.",
+  };
   gameContent.innerHTML = `
     <div class="game-view">
       <h3 class="game-heading">Ready to play?</h3>
-      <p class="game-subheading">Choose your hand and see if you can beat the computer!</p>
+      <p class="game-subheading">${difficultyDescriptions[currentLevel]}</p>
       <div class="rps-score" aria-label="Score">
         <span class="score-chip">YOU<strong>${rpsScore.wins}</strong></span>
         <span class="score-chip">TIES<strong>${rpsScore.draws}</strong></span>
@@ -296,7 +314,23 @@ async function playRps(playerMove) {
 
   const moves = ["rock", "paper", "scissors"];
   const icons = { rock: "✊", paper: "✋", scissors: "✌" };
-  const computerMove = moves[randomInteger(0, moves.length - 1)];
+  const counters = { rock: "paper", paper: "scissors", scissors: "rock" };
+  let computerMove = moves[randomInteger(0, moves.length - 1)];
+
+  if (currentLevel === 2 && lastRpsPlayerMove && randomInteger(1, 2) === 1) {
+    computerMove = counters[lastRpsPlayerMove];
+  } else if (currentLevel === 3) {
+    const mostPickedMoves = moves.filter(
+      (move) => rpsMoveCounts[move] === Math.max(...Object.values(rpsMoveCounts)),
+    );
+    if (rpsMoveCounts[lastRpsPlayerMove] !== undefined && randomInteger(1, 4) !== 1) {
+      const predictedMove = mostPickedMoves[randomInteger(0, mostPickedMoves.length - 1)];
+      computerMove = counters[predictedMove];
+    }
+  }
+
+  rpsMoveCounts[playerMove] += 1;
+  lastRpsPlayerMove = playerMove;
   let outcome;
   const round = { playerMove, computerMove };
 
@@ -325,12 +359,17 @@ async function playRps(playerMove) {
 
 function renderMathGame() {
   const gameOver = mathTimeLeft === 0;
+  const difficultyDescriptions = {
+    1: "Level 1 · Easy: add and subtract small numbers (1–10).",
+    2: "Level 2 · Medium: add and subtract numbers (2–20).",
+    3: "Level 3 · Hard: add and subtract bigger numbers (10–50).",
+  };
   gameContent.innerHTML = `
     <div class="game-view">
       <div class="math-top">
         <div>
           <h3 class="game-heading">Math time!</h3>
-          <p class="game-subheading">Solve as many as you can in 30 seconds.</p>
+          <p class="game-subheading">${difficultyDescriptions[currentLevel]} Solve as many as you can in 1 minute.</p>
         </div>
         <span class="timer-badge ${mathTimeLeft <= 5 ? "urgent" : ""}" id="math-timer">${mathTimeLeft}s</span>
       </div>
@@ -359,8 +398,14 @@ let mathProblemText = "";
 
 function newMathProblem() {
   const operation = randomInteger(0, 1);
-  let left = randomInteger(2, 20);
-  let right = randomInteger(2, 20);
+  const ranges = {
+    1: { min: 1, max: 10 },
+    2: { min: 2, max: 20 },
+    3: { min: 10, max: 50 },
+  };
+  const { min, max } = ranges[currentLevel];
+  let left = randomInteger(min, max);
+  let right = randomInteger(min, max);
 
   if (operation === 0) {
     mathAnswer = left + right;
@@ -374,7 +419,7 @@ function newMathProblem() {
 
 function startMathGame() {
   mathScore = 0;
-  mathTimeLeft = 30;
+  mathTimeLeft = mathRoundDuration;
   mathRunning = true;
   newMathProblem();
   playButtonSound();
@@ -401,7 +446,16 @@ function handleMathAnswer(event) {
   const feedback = document.querySelector("#math-feedback");
   if (Number(input.value) === mathAnswer) {
     mathScore += 1;
-    feedback.textContent = "Great job! You got it!";
+    const earnedTimeBonus = mathScore % 5 === 0;
+    if (earnedTimeBonus) {
+      mathTimeLeft += 5;
+      const timer = document.querySelector("#math-timer");
+      timer.textContent = `${mathTimeLeft}s`;
+      timer.classList.toggle("urgent", mathTimeLeft <= 5);
+    }
+    feedback.textContent = earnedTimeBonus
+      ? "Great job! 5 correct answers — you earned 5 extra seconds!"
+      : "Great job! You got it!";
     feedback.className = "math-feedback success";
     triggerMascotCheer("Yay!");
     createConfettiBurst();
